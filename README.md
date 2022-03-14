@@ -2,9 +2,8 @@
 
     Here are the steps performed by the Robot:
 
-1. Log in to  https://www.acme-test.com;
 
-2. On the landing page, Dashboard,
+1. On the landing page, Dashboard,
 
     click or hover over the Vendors menu item and then click on Search for Vendor.
     Click on Display All Vendors.
@@ -13,7 +12,7 @@
 
    Navigate back to the dashboard;Note: Navigation can be achieved in multiple ways by the robot - choose whichever you find  best.
 
-3. For each Tax ID:
+2. For each Tax ID:
 
 - Navigate to Vendors- Search page (click or  hover over the Vendors menu item and then click on Search for  Vendor);
 
