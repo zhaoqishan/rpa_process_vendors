@@ -1,38 +1,68 @@
+ To achieve this, you will use the REFrameWork as the   starting template and follow the UiPath development best   practices.
 
+    Here are the steps performed by the Robot:
 
-### REFrameWork Template ###
-**Robotic Enterprise Framework**
+1. Log in to  https://www.acme-test.com;
 
-* Built on top of *Transactional Business Process* template
-* Uses *State Machine* layout for the phases of automation project
-* Offers high level logging, exception handling and recovery
-* Keeps external settings in *Config.xlsx* file and Orchestrator assets
-* Pulls credentials from Orchestrator assets and *Windows Credential Manager*
-* Gets transaction data from Orchestrator queue and updates back status
-* Takes screenshots in case of system exceptions
+2. On the landing page, Dashboard,
 
+    click or hover over the Vendors menu item and then click on Search for Vendor.
+    Click on Display All Vendors.
 
-### How It Works ###
+    Scrape the data from the whole table displayed.The resulting datatable will be used as the input data for the process.
 
-1. **INITIALIZE PROCESS**
- + ./Framework/*InitiAllSettings* - Load configuration data from Config.xlsx file and from assets
- + ./Framework/*GetAppCredential* - Retrieve credentials from Orchestrator assets or local Windows Credential Manager
- + ./Framework/*InitiAllApplications* - Open and login to applications used throughout the process
+   Navigate back to the dashboard;Note: Navigation can be achieved in multiple ways by the robot - choose whichever you find  best.
 
-2. **GET TRANSACTION DATA**
- + ./Framework/*GetTransactionData* - Fetches transactions from an Orchestrator queue defined by Config("OrchestratorQueueName") or any other configured data source
+3. For each Tax ID:
 
-3. **PROCESS TRANSACTION**
- + *Process* - Process trasaction and invoke other workflows related to the process being automated 
- + ./Framework/*SetTransactionStatus* - Updates the status of the processed transaction (Orchestrator transactions by default): Success, Business Rule Exception or System Exception
+- Navigate to Vendors- Search page (click or  hover over the Vendors menu item and then click on Search for  Vendor);
 
-4. **END PROCESS**
- + ./Framework/*CloseAllApplications* - Logs out and closes applications used throughout the process
+- Type the Tax ID into the Vendor Tax ID field;
 
+- Click on  Search;
 
-### For New Project ###
+- Extract the values for the Vendor, Address and City and  compare them with the values from the previously extracted table from
+    the Display All Vendors page (check for EXACT match for all fields!);
 
-1. Check the Config.xlsx file and add/customize any required fields and values
-2. Implement InitiAllApplications.xaml and CloseAllApplicatoins.xaml workflows, linking them in the Config.xlsx fields
-3. Implement GetTransactionData.xaml and SetTransactionStatus.xaml according to the transaction type being used (Orchestrator queues by default)
-4. Implement Process.xaml workflow and invoke other workflows related to the process being automated
+-  If the values are not matching, this should be categorized as a  Business Rule Exception;
+
+- If the City does NOT belong to the group  {"“Brasov”", ““Bucuresti””, ““Koln””, ““Moscow””, ““Berlin””},
+
+    this should be categorized as the second Business Rule Exception.
+
+   We can only process requests from these cities.
+
+   Check the City value  extracted after the individual Tax ID search;
+
+- If no Business Rule Exception, Append the resulting datatable from each page into an CSV file;
+
+   you shouldn’t worry about the headers and format of the output  file.
+
+Constraints to follow in the development, using the REFrameWork:
+
+1. TransactionItem datatype should be a DataRow.
+
+   The  process should recover and retry 2 times in case of errors in navigation between the Vendor Search and Vendor Search Results pages.
+    One transaction is the action of navigating to the Vendor Search page,
+    searching for the TaxID and scraping the values from the resulting one
+    row table. (Similar to ACME Process 5 from the UiPath Academy).
+
+2.  Create a separate workflow file for the Login to ACME.
+
+    File input arguments: URL ; Username ; Password .
+
+3. Create a separate workflow file for closing ACME.
+
+4. Add the ACME_URL and ACME_Credential to the Excel Config file.
+
+5. Populate InitAllApplications.xaml from the Framework folder with Invoking the Login to ACME and navigation to the  Work Items.
+
+6. Populate CloseAllApplications.xaml from the Framework  folder with Invoking the Close ACME.
+
+7. Populate KillAllProcesses.xaml  from the Framework folder with killing the process used.
+
+8. Populate the Process.xaml file with the following actions:
+
+    Navigation,  Searching for TaxID, Scraping, Checking if the values match, Checking for the correct City, Appending to CSV.
+
+   Important Note: Don’t use  external file references outside of the project folder (including  Orchestrator Assets).
